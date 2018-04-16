@@ -312,6 +312,11 @@ l2fwd_main_loop(void)
 
 			for (j = 0; j < nb_rx; j++) {
 				m = pkts_burst[j];
+				if(m.tun_type == 'L2'){
+					struct rte_mbuf *temp;
+					temp = m;             //temporarily storing the initial position of m
+					m = (m->next)->next;  // Moving the pointerby two segments so that it points to the IP header part.
+				}
 				rte_prefetch0(rte_pktmbuf_mtod(m, void *));
 				l2fwd_simple_forward(m, portid);
 			}
